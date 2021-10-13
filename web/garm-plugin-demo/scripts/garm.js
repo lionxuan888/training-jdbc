@@ -1,9 +1,68 @@
-
-// select * from scf_account_ctr.repayment_term limit 10 ;
+    // select * from scf_account_ctr.repayment_term limit 10 ;
     console.info('哈哈哈，哈哈哈，哈哈哈');
     console.info('4444');
     // $("#app").html("999");
+    Date.prototype.format = function (fmt) {
+        var o = {
+            "M+": this.getMonth() + 1,                 //月份
+            "d+": this.getDate(),                    //日
+            "h+": this.getHours(),                   //小时
+            "m+": this.getMinutes(),                 //分
+            "s+": this.getSeconds(),                 //秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+            "S": this.getMilliseconds()             //毫秒
+        };
+        if (/(y+)/.test(fmt)) {
+            fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        }
+        for (var k in o) {
+            if (new RegExp("(" + k + ")").test(fmt)) {
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            }
+        }
+        return fmt;
+    }
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+        console.log("收到ajax查询完成的事件消息33:" + message);
+        // 获取所有的表头，然后迭代，找出带后缀带time的字段，然后匹配修改后续对应的所有的tr数据。
+        var $thsOfTableHead = $(".show-result  .head_wrap .el-table__head .cell");
+        var i = 0;
+        // 如何循环一个jquery对象，在循环里面如何使用。
+        $thsOfTableHead.each(function (index) {
+            var $column = $(this);
+            var columnName = $column.html();
+            console.info("列的名称是：" + $column.html());
+            // todo 把需要修改的这一列改成红丝的。
+            // todo 判断后缀是否是以time或者date结尾
+            var colunIndex = index;
+            if (columnName.endsWith("time") || columnName.endsWith("date")) {
+                // todo 查找后面所有的tr的内容，然后进行格式化。
+                var $trsOfTableBody = $(".show-result  .el-table__body").find("tr");
+                // 循环处理每一行
+                $trsOfTableBody.each(function (trIndex) {
+                    // 注意这里需要用$包装一下转换成jquery对象。
+                    let $tr = $($trsOfTableBody[trIndex]);
+                    let $td = $($tr.children().get(colunIndex));
+                    var $trContentSpanWrapper = $td.find("span").first();
+                    var trContent = $trContentSpanWrapper.html();
+                    // console.info("时间内容："+ trContent);
+                    // 判断是否为整型
+                    if (!trContent.startsWith("<span") && trContent != null && trContent != '0' && trContent != 'NULL' && trContent != '' && trContent != ' ') {
+                        // todo 整型时间格式话
+                        var formatTime = new Date(parseFloat(trContent)).format("yyyy-MM-dd hh:mm:ss");
+                        $trContentSpanWrapper.html(formatTime);
+                    }
 
+                });
+            }
+            i++;
+        });
+        console.info("列循环完毕：" + i);
+        setTimeout(function () {
+            sendResponse({status: true});
+        }, 1);
+        return true;
+    });
 
     // 监听 ajax 请求
     $(document).ajaxComplete(function (e) {
@@ -25,7 +84,7 @@
                 // 成功, 在rechargeHandler.js中监听这个事件
                 var myEvent = new CustomEvent("rachangeOk")
                 window.dispatchEvent(myEvent)
-            }else{
+            } else {
                 var time2 = setTimeout(() => {
                     // debugger
                     location.reload();
