@@ -41,13 +41,17 @@
   "content_scripts": [
     {
       "js":["scripts/jquery-3.6.0.js","scripts/garm.js"],
-//      "css": ["css/else-insert.css"],
+      // see https://developer.chrome.com/docs/extensions/mv3/content_scripts/
+      // The "all_frames" field allows the extension to specify if JavaScript and CSS files should be injected into all frames matching the specified URL requirements or only into the topmost frame in a tab.
+      "all_frames": true,
+      //      "css": ["css/else-insert.css"],
       "matches":["https://garm.pt.xiaomi.com/*"] // 只在这些站点下 content_scripts会运行
     }
   ],
   // 数组，声明插件所需要的权限，这里就是很危险的存在了，想干坏事的你是不是很激动！
   "permissions": [
     "webRequest",
+
     "*://garm.pt.xiaomi.com/*"
 //    "management",
 //    "tabs",
