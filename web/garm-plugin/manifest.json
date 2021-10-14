@@ -4,7 +4,7 @@
   "name": "garm-plugin", // 插件名称
   "version": "2",  // 插件版本
   // 这里写些废话，举个栗子，‘应产品要求，杀个程序祭天’
-  "description": "This is an extension for your chrome",
+  "description": "This is an extension for sql query",
   "icons": {
 //    "16": "images/custom/16x16.png",
 //    "48": "images/custom/48x48.png",
