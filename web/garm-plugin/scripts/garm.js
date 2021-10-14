@@ -37,7 +37,7 @@
             doTransformTime();
         });
 
-    }, 2000);
+    }, 1000);
 
     function doTransformTime() {
         console.info("开始执行转换方法时间戳方法。。。")
